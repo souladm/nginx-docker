@@ -9,7 +9,11 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt upgrade -y
 # set timezone
 RUN echo 'Europe/Kiev' > /etc/timezone
-RUN apt install -y tzdata gnupg
+RUN apt install -y tzdata gnupg curl ca-certificates gnupg2
 # install nginx
-RUN apt install -y nginx
+RUN curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add - \
+    && echo "deb http://nginx.org/packages/mainline/ubuntu bionic nginx" \
+    | tee /etc/apt/sources.list.d/nginx.list \
+    && apt update
+RUN apt install -y nginx-full
 CMD ["nginx", "-g", "daemon off;"]
